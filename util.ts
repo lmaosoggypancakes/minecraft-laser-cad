@@ -108,7 +108,7 @@ export const createNManyBlocks = (n: number, page: number) => {
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < 6; j++) {
       dxf.addInsert(face.name, point3d(10 + j * 80, 10 + i * 80));
-      const textPoint = point3d(10 + j * 80 + 20, 10 + i * 80 + 30);
+      const textPoint = point3d(5 + j * 80 + 20, 10 + i * 80 + 30);
       dxf.addText(
         textPoint,
         1,

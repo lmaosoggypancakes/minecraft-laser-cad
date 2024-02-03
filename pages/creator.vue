@@ -38,7 +38,7 @@
       >
         <button
           class="btn btn-info btn-outline flex flex-col justify-center items-center"
-          v-if="currentPage > 1"
+          v-if="currentPageIdx >= 1"
           @click="previousPage()"
         >
           <svg
@@ -67,12 +67,12 @@
         <button
           class="btn btn-primary"
           @click="download()"
-          v-if="0 < currentPage && currentPage < pages.length"
+          v-if="0 <= currentPageIdx"
         >
           Download dxf
         </button>
         <button
-          v-if="currentPage < pages.length - 1"
+          v-if="currentPageIdx < pages.length - 1"
           @click="nextPage()"
           class="btn btn-info btn-outline"
           type="submit"
@@ -101,8 +101,10 @@ const editedId = ref("");
 const canvas = ref<HTMLCanvasElement | null>(null);
 
 const pages = ref<string[]>([]);
-const dxfContent = ref("");
-const currentPage = ref(0);
+const currentPageIdx = ref(0);
+const currentPage = computed(() => {
+  return pages.value[currentPageIdx.value];
+});
 const id = ref("");
 
 onMounted(() => {
@@ -121,18 +123,13 @@ watch(id, async (val) => {
       return;
     }
     const splicedBlocks = splitArray(box.value.blocks, 10);
+    console.log(splicedBlocks);
     splicedBlocks.forEach(async (splice, index) => {
       // create a page from this
-      const dxf = await $fetch(`/api/faces/10?page=${index + 1}`);
+      const dxf = await $fetch(`/api/faces/${splice.length}?page=${index + 1}`);
 
       pages.value.push(dxf);
     });
-
-    // const spliced = splitArray(Array(100), 10);
-    // for await (const [i, _] of spliced.entries()) {
-    //   const dxf = await $fetch(`/api/faces/10?page=${i + 1}`);
-    //   pages.value.push(dxf);
-    // }
   }
 });
 const setNewId = () => {
@@ -152,7 +149,7 @@ const clearCanvas = () => {
   }
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
 };
-watch(dxfContent, (val) => {
+watch(currentPage, (val) => {
   if (val == "") return;
   const ctx = canvas.value?.getContext("2d");
   if (!ctx) {
@@ -201,19 +198,17 @@ watch(dxfContent, (val) => {
 });
 
 const nextPage = () => {
-  currentPage.value++;
+  currentPageIdx.value++;
   clearCanvas();
-  dxfContent.value = pages.value[currentPage.value - 1];
 };
 
 const previousPage = () => {
-  currentPage.value--;
+  currentPageIdx.value--;
   clearCanvas();
-  dxfContent.value = pages.value[currentPage.value - 1];
 };
 
 const download = () => {
-  const dxfToSave = pages.value[currentPage.value - 1];
+  const dxfToSave = currentPage.value;
 
   // Create a Blob from the content
   const blob = new Blob([dxfToSave], { type: "text/plain" });
