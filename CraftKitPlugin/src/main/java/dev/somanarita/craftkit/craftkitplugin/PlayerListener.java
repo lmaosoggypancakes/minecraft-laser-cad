@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public final class PlayerListener implements Listener {
 	private Map<String, World> playerWorldMap;
@@ -45,7 +46,7 @@ public final class PlayerListener implements Listener {
 			+ "Right click on the yellow wool to send your creation to our website!\n"
 			+ "3. Order your parts!\n"
 			+ "Click on the link on the next page.\"}'"
-			+ ", '{\"text\":\"Click on this!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://gaming.stackexchange.com/\"}}'], "
+			+ ", '{\"text\":\"Click on this!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://craftkitlaser.vercel.app/\"}}'], "
 			+ "title: 'test', author: 'test'}";
 	private Map<String, JsonArray> blockDataMap;
 	private final HttpClient httpClient = HttpClient.newBuilder()
@@ -110,7 +111,7 @@ public final class PlayerListener implements Listener {
 			obj.addProperty("x", normalized_x);
 			obj.addProperty("y", normalized_y);
 			obj.addProperty("z", normalized_z);
-			obj.addProperty("blockId", event.getBlockPlaced().getType().name());
+			obj.addProperty("name", event.getBlockPlaced().getType().name());
 			blockDataMap.get(player.getName()).add(obj);
 		}
 	}
@@ -124,25 +125,42 @@ public final class PlayerListener implements Listener {
 		}
 	}
 	@EventHandler
-	public void onPLayerUse(PlayerInteractEvent event) {
+	public void onPlayerUse(PlayerInteractEvent event) {
 		Player p = event.getPlayer();
 		JsonArray arr = blockDataMap.get(p.getName());
+		JsonObject body = new JsonObject();
+		body.addProperty("name", p.getName());
+		body.add("blocks", arr);
 		try {
 			if (p.getInventory().getItemInMainHand().getType() == Material.YELLOW_WOOL) {
+				p.sendMessage(ChatColor.GREEN + "Exporting your building...");
+				System.out.println(body.toString());
 				HttpRequest request = HttpRequest.newBuilder()
-						.POST(HttpRequest.BodyPublishers.ofString(arr.toString()))
-						.uri(URI.create("https://localhost:3000/blockData"))
+						.POST(HttpRequest.BodyPublishers.ofString(body.toString()))
+						.uri(URI.create("https://craftkitlaser.vercel.app/api/boxes"))
 						.setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
-						.header("Content-Type", "application/x-www-form-urlencoded")
+						.header("Content-Type", "application/json")
 						.build();
 				HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 				if (response.statusCode() == 200) {
-					p.sendMessage(ChatColor.GREEN + "Building was exported successfully!");
+					JsonElement elem = new JsonParser().parse(response.body());
+					JsonObject obj = elem.getAsJsonObject();
+					String id = obj.get("id").getAsString();
+					p.sendMessage(ChatColor.GREEN + "Building was exported successfully! Your ID is " + id + ".");
+					Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), 
+							"item replace entity " + p.getName() + " hotbar.4 with minecraft:written_book"
+									+ "{pages:"
+									+ "['{\"text\":\"  Export Successful!\n\n\nYour id is " + id + ".\nThis id is necessary to download the DXF files.\n\",\"color\":\"green\", \"extra\": [{\"text\": \"Download Output Here!\", \"color\": \"blue\", \"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://craftkitlaser.vercel.app/\"}}]}'], "
+									+ "title: 'Success!', author: 'Dev Team'}");
+					Inventory inv = p.getInventory();
+					ItemStack book = inv.getItem(4);
+					p.openBook(book);
 				} else {
 					p.sendMessage(ChatColor.RED + "Export failed. Please check your internet connection.");
 				}
 			}
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			p.sendMessage(ChatColor.RED + "Export failed. Please check your internet connection.");
 		}
 	}
