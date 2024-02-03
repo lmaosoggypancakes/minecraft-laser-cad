@@ -1,0 +1,3 @@
+name: CraftKitPlugin
+main: dev.somanarita.craftkit.craftkitplugin.CraftKitPlugin
+version: 0.0.1
