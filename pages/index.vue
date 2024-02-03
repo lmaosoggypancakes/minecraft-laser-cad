@@ -7,6 +7,4 @@
     <IndexFaq />
   </div>
 </template>
-<script setup lang="ts">
-definePageMeta({ middleware: "auth" });
-</script>
+<script setup lang="ts"></script>

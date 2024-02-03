@@ -1,8 +1,7 @@
 <template>
   <ul class="steps w-full">
-    <li class="step step-primary">Register</li>
-    <li class="step step-primary">Choose plan</li>
-    <li class="step step-primary">Purchase</li>
-    <li class="step">Receive Pancakes</li>
+    <li class="step step-primary">Build your design</li>
+    <li class="step step-primary">Prepare for Printing</li>
+    <li class="step step-primary">Laser Cut!</li>
   </ul>
 </template>

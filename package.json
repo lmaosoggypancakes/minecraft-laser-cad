@@ -25,6 +25,9 @@
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",
-    "next-auth": "^4.18.8"
+    "@tarikjabiri/dxf": "^2.8.9",
+    "dxf-parser": "^1.1.2",
+    "next-auth": "^4.18.8",
+    "three-dxf": "^1.3.1"
   }
 }

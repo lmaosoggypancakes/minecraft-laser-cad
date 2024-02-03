@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer p-10 bg-base-200 text-base-content">
+  <footer class="footer p-10 bg-base-100 text-base-content">
     <div>
       <Icon name="mdi:cookie" class="w-10 h-10" />
       <p>Pancake Industries Ltd.<br />Providing reliable pancakes since 1992</p>

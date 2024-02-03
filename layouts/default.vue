@@ -10,7 +10,7 @@
 useHead({
   htmlAttrs: {
     lang: "en",
-    "data-theme": "dracula",
+    "data-theme": "night",
   },
 });
 </script>

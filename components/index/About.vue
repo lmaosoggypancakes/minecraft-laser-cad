@@ -7,6 +7,6 @@
         in the middle of a desert, rest assured: pancakes are on the way.
       </p>
     </div>
-    <img src="@/assets/svg/barista.svg" class="h-96 w-96" />
+    <img src="@/assets/images/nunu2.jpg" width="512"  class="rounded-md mx-4"/>
   </div>
 </template>

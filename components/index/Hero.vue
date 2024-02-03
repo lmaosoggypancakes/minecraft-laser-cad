@@ -2,23 +2,16 @@
   <div class="hero min-h-screen bg-base-200">
     <div class="hero-content flex-col lg:flex-row-reverse">
       <div class="indicator w-full max-w-md md:ml-8">
-        <span class="indicator-item badge badge-accent">{{ count }}</span>
-        <div class="mockup-code w-full">
-          <pre data-prefix="$"><code>npm i pancakes</code></pre>
-        </div>
+        <img src="@/assets/images/nunu.jpeg" class="rounded-md" />
       </div>
       <div class="max-w-2xl text-center md:text-left">
-        <h1 class="text-5xl font-bold">Pancakes made easy.</h1>
+        <h1 class="text-5xl font-bold">Amplify your Minecraft Creations!</h1>
         <p class="py-6">
-          We provide high-quality infrastructure and delectable recipes so you
-          can enjoy pancakes without any hassle.
+          Let your minecraft ideas come to life with an in-game CAD software
+          that can export straight to a laser cut building!
         </p>
-        <button class="btn btn-primary" @click="count++">Get Started</button>
+        <NuxtLink to="/creator" class="btn btn-primary">Get Started</NuxtLink>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const count = ref(40);
-</script>
