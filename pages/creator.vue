@@ -114,25 +114,25 @@ const box = ref<Box | null>(null);
 
 watch(id, async (val) => {
   if (val) {
-    // const res = await useFetch(`/api/boxes/${val}`);
-    // box.value = res.data.value as any;
-    // if (!box.value) {
-    //   console.error("no blocks");
-    //   return;
-    // }
-    // const splicedBlocks = splitArray(box.value.blocks, 10);
-    // splicedBlocks.forEach(async (splice, index) => {
-    //   // create a page from this
-    //   const dxf = await $fetch(`/api/faces/10?page=${index + 1}`);
-
-    //   pages.value.push(dxf);
-    // });
-
-    const spliced = splitArray(Array(100), 10);
-    for await (const [i, _] of spliced.entries()) {
-      const dxf = await $fetch(`/api/faces/10?page=${i + 1}`);
-      pages.value.push(dxf);
+    const res = await useFetch(`/api/boxes/${val}`);
+    box.value = res.data.value as any;
+    if (!box.value) {
+      console.error("no blocks");
+      return;
     }
+    const splicedBlocks = splitArray(box.value.blocks, 10);
+    splicedBlocks.forEach(async (splice, index) => {
+      // create a page from this
+      const dxf = await $fetch(`/api/faces/10?page=${index + 1}`);
+
+      pages.value.push(dxf);
+    });
+
+    // const spliced = splitArray(Array(100), 10);
+    // for await (const [i, _] of spliced.entries()) {
+    //   const dxf = await $fetch(`/api/faces/10?page=${i + 1}`);
+    //   pages.value.push(dxf);
+    // }
   }
 });
 const setNewId = () => {
